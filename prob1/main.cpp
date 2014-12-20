@@ -1016,7 +1016,8 @@ bool GetOrientation(int ax, int ay, int bx, int by, int cx, int cy)
     return orientation > 0;
 }
 
-bool IsPointInsideTriangle(int ax, int ay, int bx, int by, int cx, int cy, int px, int py)
+bool IsPointInsideTriangle(int ax, int ay, int bx, int by, int cx, int cy,
+                           int px, int py)
 {
     double abc = GetOrientation(ax, ay, bx, by, cx, cy);
     double abp = GetOrientation(ax, ay, bx, by, px, py);
