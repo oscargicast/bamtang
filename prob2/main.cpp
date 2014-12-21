@@ -52,7 +52,7 @@ struct sort_pair_second
 };
 
 
-string FrequencyTable(string message)
+string GetFrequencyTable(string message)
 {
     string freqLang;
     std::vector< std::pair<char, int> > items;
@@ -90,8 +90,7 @@ int main()
     std::transform(kAlphabet.begin(), kAlphabet.end(), kAlphabet.begin(), ::tolower);
     std::transform(kFreqLang.begin(), kFreqLang.end(), kFreqLang.begin(), ::tolower);
 
-    string freqLang = FrequencyTable(kEncryptedMessage);
+    string freqLang = GetFrequencyTable(kEncryptedMessage);
     string message = DecryptMessage(kEncryptedMessage, freqLang);
     cout << message << endl;
-
 }
