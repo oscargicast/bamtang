@@ -27,5 +27,5 @@ Compilar y ejecutar **main.cpp**. El resultado es el siguiente:
 
 ``` shell
 >> ./main
->> 229
+>> 228
 ```

@@ -1009,29 +1009,35 @@ int g_triangles[] =
     -628, 478, 34, -294, 962, 339
 };
 
-
-bool GetOrientation(int ax, int ay, int bx, int by, int cx, int cy)
+// Returns a positive value if the orientation is clockwise.
+//
+// A(ax, ay), B(bx, by) and C(cx, cy) are the points of the given triangle.
+double GetOrientation(int ax, int ay, int bx, int by, int cx, int cy)
 {
+    // The orientation is computed from the cross product of the vectors
+    // AC and BC.
     double orientation = (ax - cx) * (by - cy) - (ay - cy) * (bx - cx);
-    return orientation > 0;
+    return orientation;
 }
 
 bool IsPointInsideTriangle(int ax, int ay, int bx, int by, int cx, int cy,
                            int px, int py)
 {
-    double abc = GetOrientation(ax, ay, bx, by, cx, cy);
     double abp = GetOrientation(ax, ay, bx, by, px, py);
     double bcp = GetOrientation(bx, by, cx, cy, px, py);
     double cap = GetOrientation(cx, cy, ax, ay, px, py);
 
-    bool frontier_condition = !(ax == kTestPoint[0] &&
-                                ay == kTestPoint[1] ||
-                                bx == kTestPoint[0] &&
-                                by == kTestPoint[1] ||
-                                cx == kTestPoint[0] &&
-                                cy == kTestPoint[1]);
+    // Checks if P(px, py) is in the triangle's edge.
+    bool boundary_condition = !(abp == 0 || bcp == 0 || cap == 0);
 
-    if ((abp == bcp) && (bcp == cap) && (abc == abp) && frontier_condition)
+    // Returns true if the orientation is clockwise.
+    abp = abp > 0;
+    bcp = bcp > 0;
+    cap = cap > 0;
+
+    // Returns true if all the internal triangles formed with P have the same
+    // orientation and meets the boundary condition.
+    if ((abp == bcp) && (bcp == cap) && boundary_condition)
         return true;
     return false;
 }
