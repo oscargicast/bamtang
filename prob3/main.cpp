@@ -163,10 +163,6 @@ Vector GetShadowPoint(Vector q, Vector p1, Vector p2, Vector p3, Vector v) {
     Vector shadow_point;
     shadow_point = q + t * v;
 
-    shadow_point.print();
-    cout << ShadowCondition(q, shadow_point, v) << endl;
-    cout << std::isfinite(t) << endl;
-
     if (ShadowCondition(q, shadow_point, v) && std::isfinite(t)) {
         // ShadowCondition ensures that the light source is in backlight.
         //
