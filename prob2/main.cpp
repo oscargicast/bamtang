@@ -93,4 +93,5 @@ int main()
     string freqLang = GetFrequencyTable(kEncryptedMessage);
     string message = DecryptMessage(kEncryptedMessage, freqLang);
     cout << message << endl;
+    return 0;
 }
