@@ -12,12 +12,7 @@ private:
     double x, y, z;
 
 public:
-    Vector() {
-        x = 0;
-        y = 0;
-        z = 0;
-    }
-    Vector(double x, double y, double z) {
+    Vector(double x = 0, double y = 0, double z = 0) {
         this->x = x;
         this->y = y;
         this->z = z;
