@@ -202,7 +202,7 @@ int main()
         v.pretty_set("V");
 
         cout << endl;
-        cout << "========== Resume ==========" << endl;
+        cout << "========== Summary ==========" << endl;
         cout << "Q: "; q.print();
         cout << "P1: "; p1.print();
         cout << "P2: "; p2.print();
