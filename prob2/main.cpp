@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <vector>
 #include <string>
+
 using namespace std;
+
 
 const string kEncryptedMessage = "\
 uid nx, aex jcdjipx iu wzux zp, ta wxtpa jtdaws, ai etkx vis.\n\
@@ -23,75 +25,75 @@ zrxt. pi z etkx adzxr ai ntfx dcos qirx qiyqzpx tyr pcqqzyqa.\n\
 scfzezdi ntapcniai. (hhh.tdaznt.qin/zyak/dcos)\n\
 ";
 
-std::string kFreqLang = "TEOIARNSHLMYUCWDGPFBVKJ";
-
-std::string kAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+string kFreqLang = "TEOIARNSHLMYUCWDGPFBVKJ";
+string kAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
 int CountLetter(char letter, string message)
 {
-    int cont = 0;
-    int found = 0;
-    while (true)
-    {
-        found = message.find(letter, found);
-        if (found == std::string::npos)
-            break;
-        found++;
-        cont++;
-    }
-    return cont;
+  int cont = 0;
+  int found = 0;
+  while (true)
+  {
+    found = message.find(letter, found);
+    if (found == std::string::npos)
+      break;
+    found++;
+    cont++;
+  }
+  return cont;
 }
 
-struct sort_pair_second
+struct SortPairBySecondArg
 {
-    bool operator()(const std::pair<char, int> &left, const std::pair<char, int> &right)
-    {
-        return left.second < right.second;
-    }
+  bool operator()(const std::pair<char, int> &left,
+                  const std::pair<char, int> &right)
+  {
+    return left.second < right.second;
+  }
 };
-
 
 string GetFrequencyTable(string message)
 {
-    string freqLang;
-    std::vector< std::pair<char, int> > items;
+  string freq_lang;
+  std::vector< std::pair<char, int> > items;
 
-    for (int i = 0; i < kAlphabet.length(); i++)
-    {
-        int second = CountLetter(kAlphabet.at(i), message);
-        char first = kAlphabet[i];
-        items.insert(items.begin() + i, std::make_pair(first, second));
-    }
-    std::sort(items.rbegin(), items.rend(), sort_pair_second());
-    for (int i = 0; i < kAlphabet.length(); i++)
-    {
-        if (items[i].second)
-            freqLang.push_back(items[i].first);
-    }
-    return freqLang;
+  for (int i = 0; i < kAlphabet.length(); i++)
+  {
+    int second = CountLetter(kAlphabet.at(i), message);
+    char first = kAlphabet[i];
+    items.insert(items.begin() + i, std::make_pair(first, second));
+  }
+  std::sort(items.rbegin(), items.rend(), SortPairBySecondArg());
+  for (int i = 0; i < kAlphabet.length(); i++)
+  {
+    if (items[i].second)
+      freq_lang.push_back(items[i].first);
+  }
+  return freq_lang;
 }
 
-
-string DecryptMessage(string message, string freqLang)
+string DecryptMessage(string message, string freq_lang)
 {
-    int index;
-    for (int i = 0; i < message.length(); i++)
-    {
-        index = freqLang.find(message[i]);
-        if (index != std::string::npos)
-            message[i] = kFreqLang[index];
-    }
-    return message;
+  int index;
+  for (int i = 0; i < message.length(); i++)
+  {
+    index = freq_lang.find(message[i]);
+    if (index != std::string::npos)
+      message[i] = kFreqLang[index];
+  }
+  return message;
 }
 
 int main()
 {
-    std::transform(kAlphabet.begin(), kAlphabet.end(), kAlphabet.begin(), ::tolower);
-    std::transform(kFreqLang.begin(), kFreqLang.end(), kFreqLang.begin(), ::tolower);
+  std::transform(kAlphabet.begin(), kAlphabet.end(), kAlphabet.begin(),
+                 ::tolower);
+  std::transform(kFreqLang.begin(), kFreqLang.end(), kFreqLang.begin(),
+                 ::tolower);
 
-    string freqLang = GetFrequencyTable(kEncryptedMessage);
-    string message = DecryptMessage(kEncryptedMessage, freqLang);
-    cout << message << endl;
-    return 0;
+  string freq_lang = GetFrequencyTable(kEncryptedMessage);
+  string message = DecryptMessage(kEncryptedMessage, freq_lang);
+  cout << message << endl;
+  return 0;
 }
