@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <vector>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,18 +15,21 @@
 using namespace std;
 
 // Set here to visualize!
+// const string kInitPosition = "7Q/2Rp4/2pN4/p2rp3/P2N4/B1k5/2PpRb2/3K2n1";
 const string kInitPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+// Chess pieces available.
+const string kChessPieces = "prbnqk";
 
 // Dimensions parametric Chess.
-const int kSquareSize = 90; // Change here in order to resize the entire chess.
+const int kSquareSize = 60; // Change here in order to resize the entire chess.
 const float kScaleChessPieces = 0.85; // Relative to the kSquareSize.
 const int kScreenWidth = kSquareSize * 8;
 const int kScreenHeight = kSquareSize * 10;
 
-// Chess Board Colors.
+// Chessboard Colors.
 const GLfloat kBackgroundColor[] = {33.0 / 255.0, 33.0 / 255.0, 33.0 / 255.0, 0.0};
-const GLfloat kBlackSquareColor[] = {117.0 / 255.0, 117.0 / 255.0, 117.0 / 255.0};
-const GLfloat kWhiteSquareColor[] = {66.00 / 255.0, 66 / 255.0, 66 / 255.0};
+const GLfloat kWhiteSquareColor[] = {117.0 / 255.0, 117.0 / 255.0, 117.0 / 255.0};
+const GLfloat kBlackSquareColor[] = {66.00 / 255.0, 66 / 255.0, 66 / 255.0};
 
 
 // Called when a key is pressed.
@@ -132,31 +137,76 @@ void LoadImage(const char chess_piece, const int row = 0, const int col = 0) {
 
 }
 
-void DrawChessBoard(const string init_position =
-                      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
-  LoadImage('r', 0, 0);
-  LoadImage('n', 0, 1);
-  LoadImage('b', 0, 2);
-  LoadImage('q', 0, 3);
-  LoadImage('k', 0, 4);
-  LoadImage('b', 0, 5);
-  LoadImage('n', 0, 6);
-  LoadImage('r', 0, 7);
+vector<string> &split(const string &s, char delim, vector<string> &elems) {
+  stringstream ss(s);
+  string item;
+  while (getline(ss, item, delim))
+    elems.push_back(item);
+  return elems;
+}
 
-  for (int i = 0; i < 8; i++)
-    LoadImage('p', 1, i);
+vector<string> split(const string &s, char delim) {
+  vector<string> elems;
+  split(s, delim, elems);
+  return elems;
+}
 
-  LoadImage('R', 7, 0);
-  LoadImage('N', 7, 1);
-  LoadImage('B', 7, 2);
-  LoadImage('Q', 7, 3);
-  LoadImage('K', 7, 4);
-  LoadImage('B', 7, 5);
-  LoadImage('N', 7, 6);
-  LoadImage('R', 7, 7);
+// Returns true if the init_position is consistent.
+bool ChessPositionValidator(const string init_position) {
+  char piece;
+  vector<string> chess_rows = split(init_position, '/');
+  if (chess_rows.size() != 8)
+    return false;
 
-  for (int i = 0; i < 8; i++)
-    LoadImage('P', 6, i);
+  for (int row = 0; row < chess_rows.size(); row++) {
+    int chess_col = 0;
+    string chess_row = chess_rows[row];
+
+    for (int j = 0; j < chess_row.length(); j++)
+    {
+      piece = chess_row[j];
+
+      if (isdigit(piece)) {
+        chess_col += piece - '0'; // Cast piece to int and add to col.
+        continue;
+      }
+
+      if (kChessPieces.find(tolower(piece)) == string::npos) {
+        cout << piece << " piece's position is not valid!" << endl;
+        return false;
+      }
+
+      // If piece is not a number place the piece in the chessboard.
+      chess_col++;
+    }
+    if ( chess_col != 8)
+      return false;
+  }
+  cout << "Your position is acceptable :)" << endl;
+  return true;
+}
+
+// Draws chess pieces inside the chessboard.
+void DrawChessBoard(const string init_position) {
+  vector<string> chess_rows = split(init_position, '/');
+  char piece;
+
+  for (int row = 0; row < chess_rows.size(); row++) {
+    int chess_col = 0;
+    string chess_row = chess_rows[row];
+
+    for (int j = 0; j < chess_row.length(); j++)
+    {
+      piece = chess_row[j];
+      if (isdigit(piece)) {
+        chess_col += piece - '0'; // Cast piece to int and add to col.
+        continue;
+      }
+      // If piece is not a number place the piece in the chessboard.
+      LoadImage(piece, row, chess_col);
+      chess_col++;
+    }
+  }
 }
 
 void Render() {
@@ -230,7 +280,7 @@ int main(int argc, char **argv) {
   glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - kScreenWidth) / 2,
                          (glutGet(GLUT_SCREEN_HEIGHT) - kScreenHeight) / 2);
 
-  glutCreateWindow("Chess Board");
+  glutCreateWindow("Chessboard");
   if (!InitGL()) {
     cout << "Unable to initialize graphics library!" << endl;
     return 1;
@@ -240,6 +290,11 @@ int main(int argc, char **argv) {
 
   cout << "kInitPosition:" << endl;
   cout << kInitPosition << endl;
+
+  if (!ChessPositionValidator(kInitPosition)) {
+    cout << "Init position is not valid! :(" << endl;
+    exit(0); // Exit the program.
+  }
 
   glutMainLoop();
   return 0;
