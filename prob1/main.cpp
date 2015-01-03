@@ -1010,6 +1010,7 @@ int g_triangles[] =
   -628, 478, 34, -294, 962, 339
 };
 
+
 // Returns a positive value if the orientation is clockwise.
 //
 // A(ax, ay), B(bx, by) and C(cx, cy) are the points of the given triangle.
