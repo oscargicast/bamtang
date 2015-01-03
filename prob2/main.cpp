@@ -29,6 +29,7 @@ string kFreqLang = "TEOIARNSHLMYUCWDGPFBVKJ";
 string kAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
+// Returns the frequency of the letter given inside the message.
 int CountLetter(char letter, string message)
 {
   int cont = 0;
@@ -44,6 +45,7 @@ int CountLetter(char letter, string message)
   return cont;
 }
 
+// Sorts pair structure sorted by the second argument.
 struct SortPairBySecondArg
 {
   bool operator()(const std::pair<char, int> &left,
@@ -53,47 +55,58 @@ struct SortPairBySecondArg
   }
 };
 
+// Gets the freq table of the message given.
 string GetFrequencyTable(string message)
 {
-  string freq_lang;
-  std::vector< std::pair<char, int> > items;
+  string freq_table;
+  std::vector< std::pair<char, int> > complete_freq_table;
 
+  // Counts the frequency of each letter of the alphabet.
   for (int i = 0; i < kAlphabet.length(); i++)
   {
     int second = CountLetter(kAlphabet.at(i), message);
     char first = kAlphabet[i];
-    items.insert(items.begin() + i, std::make_pair(first, second));
+    complete_freq_table.insert(complete_freq_table.begin() + i,
+                               std::make_pair(first, second));
   }
-  std::sort(items.rbegin(), items.rend(), SortPairBySecondArg());
+  // Sorts complete_freq_table by letter frequency (second argument).
+  std::sort(complete_freq_table.rbegin(), complete_freq_table.rend(),
+            SortPairBySecondArg());
+  // Filters if letter frequency is 0.
   for (int i = 0; i < kAlphabet.length(); i++)
   {
-    if (items[i].second)
-      freq_lang.push_back(items[i].first);
+    if (complete_freq_table[i].second)
+      freq_table.push_back(complete_freq_table[i].first);
   }
-  return freq_lang;
+  return freq_table;
 }
 
+// Returns decrypt message.
 string DecryptMessage(string message, string freq_lang)
 {
+  string freq_table = GetFrequencyTable(message);
   int index;
+
+  // Replaces the message freq_lang by the freq_table obtained.
   for (int i = 0; i < message.length(); i++)
   {
-    index = freq_lang.find(message[i]);
+    index = freq_table.find(message[i]);
     if (index != std::string::npos)
-      message[i] = kFreqLang[index];
+      message[i] = freq_lang[index];
   }
+
   return message;
 }
 
 int main()
 {
+  // Normalizes the kAlphabet and kFreqLang to lowercase.
   std::transform(kAlphabet.begin(), kAlphabet.end(), kAlphabet.begin(),
                  ::tolower);
   std::transform(kFreqLang.begin(), kFreqLang.end(), kFreqLang.begin(),
                  ::tolower);
 
-  string freq_lang = GetFrequencyTable(kEncryptedMessage);
-  string message = DecryptMessage(kEncryptedMessage, freq_lang);
+  string message = DecryptMessage(kEncryptedMessage, kFreqLang);
   cout << message << endl;
   return 0;
 }
