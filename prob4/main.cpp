@@ -1,21 +1,30 @@
 #include <iostream>
+#include <string>
+
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <GL/freeglut.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <SOIL/SOIL.h>
-#include <string>
 
 using namespace std;
 
+// Set here to visualize!
+const string kInitPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
-string kInitPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-const int kSquareSize = 90;
+// Dimensions parametric Chess.
+const int kSquareSize = 90; // Change here in order to resize the entire chess.
 const float kScaleChessPieces = 0.85; // Relative to the kSquareSize.
 const int kScreenWidth = kSquareSize * 8;
 const int kScreenHeight = kSquareSize * 10;
+
+// Chess Board Colors.
+const GLfloat kBackgroundColor[] = {33.0 / 255.0, 33.0 / 255.0, 33.0 / 255.0, 0.0};
+const GLfloat kBlackSquareColor[] = {117.0 / 255.0, 117.0 / 255.0, 117.0 / 255.0};
+const GLfloat kWhiteSquareColor[] = {66.00 / 255.0, 66 / 255.0, 66 / 255.0};
 
 
 // Called when a key is pressed.
@@ -27,7 +36,7 @@ void HandleKeypress(unsigned char key, int x, int y) {
 }
 
 // Called when the window is resized. On grounds of simplicity keep it fixed.
-void HandleResize(int w, int h) {
+void HandleResize(const int w, const int h) {
   glutReshapeWindow(kScreenWidth, kScreenHeight);
 }
 
@@ -72,7 +81,7 @@ string GetChessPieceImagePath(char piece) {
   return path;
 }
 
-void LoadImage(const char chess_piece, int row = 0, int col = 0) {
+void LoadImage(const char chess_piece, const int row = 0, const int col = 0) {
   GLuint texture;
   string image_path = GetChessPieceImagePath(chess_piece);
 
@@ -95,11 +104,11 @@ void LoadImage(const char chess_piece, int row = 0, int col = 0) {
 
   int max_measure = max(width, height);
 
-  // Scaling chess pieces.
+  // Scales chess pieces.
   width = kScaleChessPieces * kSquareSize * width / max_measure;
   height = kScaleChessPieces *  kSquareSize * height / max_measure;
 
-  // Placing the image in the center of the box (row, column).
+  // Places the image in the center of the box (row, column).
   glBegin(GL_QUADS);
   glColor4f(1.0, 1.0, 1.0, 1);
 
@@ -123,7 +132,7 @@ void LoadImage(const char chess_piece, int row = 0, int col = 0) {
 
 }
 
-void DrawChessBoard(string initPosition =
+void DrawChessBoard(const string init_position =
                       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
   LoadImage('r', 0, 0);
   LoadImage('n', 0, 1);
@@ -154,11 +163,12 @@ void Render() {
   glClear(GL_COLOR_BUFFER_BIT);
   glEnable(GL_TEXTURE_2D);
 
-  // Print the board.
-  glColor3f(117 / 255.0, 117 / 255.0, 117 / 255.0);
+  // Draws the board.
+  glColor3f(kWhiteSquareColor[0], kWhiteSquareColor[1], kWhiteSquareColor[2]);
   glRectf(0, kSquareSize, kScreenWidth, kScreenHeight - kSquareSize);
 
-  glColor3f(66 / 255.0, 66 / 255.0, 66 / 255.0);
+  // Draws the black squares.
+  glColor3f(kBlackSquareColor[0], kBlackSquareColor[1], kBlackSquareColor[2]);
   for (int j = 0; j < 8; j++) {
     for (int i = 0; i < 4; i++) {
       glRectf(
@@ -178,7 +188,7 @@ void Render() {
   glutSwapBuffers();
 }
 
-// Set handler functions for drawing, keypresses, and window resizes.
+// Sets handler functions for drawing, keypresses, and window resizes.
 void InitializeGlutCallbacks()
 {
   glutDisplayFunc(Render);
@@ -188,20 +198,21 @@ void InitializeGlutCallbacks()
 
 bool InitGL()
 {
-  // Initialize Projection Matrix.
+  // Initializes Projection Matrix.
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  // Change coordinates scale and origin to the top left corner.
+  // Changes coordinates scale and origin to the top left corner.
   glOrtho(0.0, kScreenWidth, kScreenHeight, 0.0, 1.0, -1.0);
 
-  // Initialize Modelview Matrix.
+  // Initializes Modelview Matrix.
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
 
-  // Initialize clear color.
-  glClearColor(33 / 255.0, 33 / 255.0, 33 / 255.0, 0);
+  // Sets the background color.
+  glClearColor(kBackgroundColor[0], kBackgroundColor[1], kBackgroundColor[2],
+               kBackgroundColor[3]);
 
-  // Check for errors.
+  // Checks for errors.
   GLenum error = glGetError();
   if (error != GL_NO_ERROR)
   {
