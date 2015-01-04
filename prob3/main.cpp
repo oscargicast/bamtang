@@ -172,7 +172,7 @@ Vector GetShadowPoint(Vector q, Vector p1, Vector p2, Vector p3, Vector v) {
 }
 
 // Returns 'c' to continue or 'q' to quit.
-char ContinueOrQuit(char guard) {
+void ContinueOrQuit(char &guard) {
   cout << endl << "Enter [c] to continue or [q] to quit" << endl;
   cin >> guard;
   while (guard != 'c' && guard != 'q') {
@@ -181,7 +181,6 @@ char ContinueOrQuit(char guard) {
     while (cin.get() != '\n');
     cin >> guard;
   }
-  return guard;
 }
 
 int main()
@@ -217,7 +216,7 @@ int main()
       cout << "++++++++++ I don't have shadow :( ++++++++++" << endl;
 
     // Asks to continue or not.
-    guard = ContinueOrQuit(guard);
+    ContinueOrQuit(guard);
     if (guard == 'q')
       break;
 
